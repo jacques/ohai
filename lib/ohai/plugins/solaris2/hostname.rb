@@ -29,6 +29,6 @@ if fqdn_lookup.split('.').length > 1
   # we recieved an fqdn
   fqdn fqdn_lookup
 else
-  # default to assembling one
-  fqdn(from("hostname") + "." + from("domainname"))
+  # Use the hosts hostname
+  fqdn from("hostname")
 end
