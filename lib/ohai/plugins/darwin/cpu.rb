@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Nathan L Smith (<nlloyds@gmail.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +16,8 @@
 # limitations under the License.
 #
 
-provides "keys/ssh"
+provides "cpu"
 
-require_plugin "keys"
-
-keys[:ssh] = Mash.new
-
-keys[:ssh][:host_dsa_public] = IO.read("/opt/ssh/etc/ssh_host_dsa_key.pub").split[1]
-keys[:ssh][:host_rsa_public] = IO.read("/opt/ssh/etc/ssh_host_rsa_key.pub").split[1]
+cpu Mash.new
+cpu[:real]  = from("sysctl -n hw.physicalcpu").to_i
+cpu[:total] = from("sysctl -n hw.logicalcpu").to_i

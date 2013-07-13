@@ -12,7 +12,10 @@ spec = Gem::Specification.new do |s|
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
 
-  if s.platform.to_s == 'x86-mswin32'
+  # This only helps with bundler because otherwise we make a dependency based
+  # on what platform we are building a gem on, not what platform we are
+  # installing it on.
+  if RUBY_PLATFORM =~ /mswin|mingw|windows/
     s.add_dependency "systemu", "~> 2.2.0"
   else
     s.add_dependency "systemu"
@@ -22,7 +25,9 @@ spec = Gem::Specification.new do |s|
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config"
   s.add_dependency "mixlib-log"
+  s.add_dependency "mixlib-shellout"
   s.add_dependency "ipaddress"
+  s.add_development_dependency "rake"
   s.add_development_dependency "rspec-core"
   s.add_development_dependency "rspec-expectations"
   s.add_development_dependency "rspec-mocks"

@@ -1,8 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Author:: Tollef Fog Heen <tfheen@err.no>
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
-# Copyright:: Copyright (c) 2010 Tollef Fog Heen <tfheen@err.no>
+# Author:: Nathan L Smith (<nlloyds@gmail.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,21 +16,25 @@
 # limitations under the License.
 #
 
-begin
-  require 'chef'
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
-describe Ohai::System, "plugin chef" do
+require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+
+describe Ohai::System, "Darwin cpu plugin" do
   before(:each) do
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:os] = "darwin"
+    @ohai.stub(:from).with("sysctl -n hw.physicalcpu").and_return("1")
+    @ohai.stub(:from).with("sysctl -n hw.logicalcpu").and_return("2")
   end
-  
-  it "should set [:chef_packages][:chef][:version] to the current chef version" do
-    @ohai._require_plugin("chef")
-    @ohai[:chef_packages][:chef][:version].should == Chef::VERSION
+
+  it "should set cpu[:total] to 2" do
+    @ohai._require_plugin("darwin::cpu")
+    @ohai[:cpu][:total].should == 2
   end
-end
-rescue LoadError
-  # the chef module is not available, ignoring.
+
+  it "should set cpu[:real] to 1" do
+    @ohai._require_plugin("darwin::cpu")
+    @ohai[:cpu][:real].should == 1
+  end
 end

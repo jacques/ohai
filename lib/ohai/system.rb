@@ -21,6 +21,7 @@ require 'ohai/log'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/string'
+require 'mixlib/shellout'
 
 require 'yajl'
 
@@ -132,7 +133,7 @@ module Ohai
           Dir[File.join(path, '*')],
           Dir[File.join(path, @data[:os], '**', '*')]
         ].flatten.each do |file|
-          file_regex = Regexp.new("#{path}#{File::SEPARATOR}(.+).rb$")
+          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
             plugin_name = md[1].gsub(File::SEPARATOR, "::")
@@ -244,8 +245,8 @@ module Ohai
         data = data[part]
       end
       raise ArgumentError, "I cannot find an attribute named #{a}!" if data.nil?
-      case a
-      when Hash,Mash,Array
+      case data
+      when Hash,Mash,Array,Fixnum
         json_pretty_print(data)
       when String
         if data.respond_to?(:lines)
